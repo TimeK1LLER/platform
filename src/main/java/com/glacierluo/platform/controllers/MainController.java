@@ -20,7 +20,6 @@ public class MainController {
     }
 
 
-
     @GetMapping("/allUser")
     public @ResponseBody Iterable<User> getAllUsers(){
         return userRepository.findAll();
