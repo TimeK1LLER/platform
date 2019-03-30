@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Null;
 
 @Entity
 public class User {
@@ -18,6 +19,25 @@ public class User {
     private String classNumber;
     private String grade;
     private String identity;
+
+    public User updateUser(User U){
+        setName(U.name);
+        setNickname(U.nickname);
+        setPhoneNumber(U.phoneNumber);
+        setIdNumber(U.idNumber);
+        setInstitute(U.institute);
+        setMajor(U.major);
+        setClassNumber(U.classNumber);
+        setGrade(U.grade);
+        setIdentity(U.identity);
+        return this;
+    }
+
+    public boolean checkNull(){
+        return this.getId() != null && this.getName() != null && this.getNickname() != null && this.getPhoneNumber() != null
+                && this.getIdNumber() != null && this.getInstitute() != null && this.getMajor() != null
+                && this.getClassNumber() != null && this.getGrade() != null && this.getIdentity() != null;
+    }
 
     public Long getId() {
         return id;
