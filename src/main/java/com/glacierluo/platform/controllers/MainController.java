@@ -1,24 +1,31 @@
 package com.glacierluo.platform.controllers;
 
+import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.glacierluo.platform.entity.User;
 import com.glacierluo.platform.repository.UserRepository;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.VfsUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.glacierluo.platform.classes.Json;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.beans.ExceptionListener;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static org.apache.tomcat.util.file.ConfigFileLoader.getInputStream;
 
 @Controller
 @RequestMapping(path="/")
@@ -64,8 +71,8 @@ public class MainController {
 //        ExcelU
 //    }
 
-    @GetMapping("/usersSheet")
-    public void userSheet(HttpServletRequest request, HttpServletResponse response){
+    @GetMapping("/usersSheetExport")
+    public void userSheetExport(HttpServletRequest request, HttpServletResponse response){
         ServletOutputStream out = null;
         try {
             out = response.getOutputStream();
@@ -80,7 +87,7 @@ public class MainController {
         response.setCharacterEncoding("utf-8");
         response.setHeader("Content-disposition", "attachment;filename="+fileName+".xlsx");
         Sheet sheet1 = new Sheet(1, 0, User.class);
-        sheet1.setSheetName("sheet1");
+        sheet1.setSheetName("用户表");
         List<List<String>> users = new ArrayList<>();
 //        userRepository.findAll().forEach(users::add);
         for (User user : userRepository.findAll()) {
@@ -97,6 +104,43 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @PostMapping("/userSheetInport")
+    public @ResponseBody Json userSheetExport(HttpServletRequest request) throws IOException {
+        int len = request.getContentLength();
+//        System.out.println(request.getContentType());
+        ServletInputStream inputStream = request.getInputStream();
+        byte[] buffer = new byte[len];
+        inputStream.read(buffer, 0, len);
+        InputStream input = new BufferedInputStream(new ByteArrayInputStream(buffer));
+        List<List> data = new ArrayList<>();
+        try{
+            ExcelReader excelReader = new ExcelReader(input, null,
+                    new AnalysisEventListener<List<String>>() {
+                        @Override
+                        public void invoke(List<String> object, AnalysisContext context) {
+                            System.out.println(
+                                    "当前sheet:" + context.getCurrentSheet().getSheetNo() + " 当前行：" + context.getCurrentRowNum()
+                                            + " data:" + object);
+                            data.add(object);
+                        }
+                        @Override
+                        public void doAfterAllAnalysed(AnalysisContext context) {
+                            data.remove(0);
+                        }
+                    });
+            excelReader.read();
+        } catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            try {
+                inputStream.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        return new Json(data.toString(), 200);
     }
 
     @GetMapping("/userInfo/userID/{userID}")
