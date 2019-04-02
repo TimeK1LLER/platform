@@ -1,7 +1,9 @@
 package com.glacierluo.platform.entity;
 
-import com.alibaba.excel.annotation.ExcelProperty;
-import com.alibaba.excel.metadata.BaseRowModel;
+import cn.afterturn.easypoi.excel.annotation.Excel;
+import cn.afterturn.easypoi.excel.annotation.ExcelTarget;
+//import com.alibaba.excel.annotation.ExcelProperty;
+//import com.alibaba.excel.metadata.BaseRowModel;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,27 +14,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class User extends BaseRowModel {
+@ExcelTarget("User")
+public class User{
     @Id
-    @ExcelProperty(value = "学号", index = 0)
+//    @ExcelProperty(value = "学号", index = 0)
+    @Excel(name = "学号", orderNum = "1")
     private Long id;
-    @ExcelProperty(value = "姓名", index = 1)
+//    @ExcelProperty(value = "姓名", index = 1)
+    @Excel(name = "姓名", orderNum = "2")
     private String name;
-    @ExcelProperty(value = "昵称", index = 2)
+//    @ExcelProperty(value = "昵称", index = 2)
+    @Excel(name = "昵称", orderNum = "3")
     private String nickname;
-    @ExcelProperty(value = "手机号", index = 3)
+//    @ExcelProperty(value = "手机号", index = 3)
+    @Excel(name = "手机号", orderNum = "4")
     private String phoneNumber;
-    @ExcelProperty(value = "身份证号", index = 4)
+//    @ExcelProperty(value = "身份证号", index = 4)
+    @Excel(name = "身份证号", orderNum = "5")
     private Long idNumber;
-    @ExcelProperty(value = "学院", index = 5)
+//    @ExcelProperty(value = "学院", index = 5)
+    @Excel(name = "学院", orderNum = "6")
     private String institute;//学院
-    @ExcelProperty(value = "专业", index = 6)
+//    @ExcelProperty(value = "专业", index = 6)
+    @Excel(name = "专业", orderNum = "7")
     private String major;
-    @ExcelProperty(value = "班级", index = 7)
+//    @ExcelProperty(value = "班级", index = 7)
+    @Excel(name = "班级", orderNum = "8")
     private String classNumber;
-    @ExcelProperty(value = "年级", index = 8)
+//    @ExcelProperty(value = "年级", index = 8)
+    @Excel(name = "年级", orderNum = "9")
     private String grade;
-    @ExcelProperty(value = "身份", index = 9)
+//    @ExcelProperty(value = "身份", index = 9)
+    @Excel(name = "身份", orderNum = "10")
     private String identity;
 
     public User updateUser(User U){
