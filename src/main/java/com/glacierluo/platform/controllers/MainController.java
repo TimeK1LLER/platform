@@ -106,22 +106,13 @@ public class MainController {
 
 
     @PostMapping("/usersSheetImport")
-    public @ResponseBody Json userSheetExport(HttpServletRequest request){
+    public @ResponseBody Json userSheetExport(HttpServletRequest request) throws Exception {
         int len = request.getContentLength();
 //        System.out.println(request.getContentType());
         ServletInputStream inputStream = null;
-        try {
-            inputStream = request.getInputStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        inputStream = request.getInputStream();
         byte[] buffer = new byte[len];
-        try {
-            assert inputStream != null;
-            inputStream.read(buffer, 0, len);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        inputStream.read(buffer, 0, len);
         InputStream input = new BufferedInputStream(new ByteArrayInputStream(buffer));
 //        InputStream input = new ByteArrayInputStream(buffer);
         ZipSecureFile.setMinInflateRatio(-1.0d);
@@ -129,12 +120,8 @@ public class MainController {
         params.setTitleRows(1);
         params.setHeadRows(1);
         List<User> data = new ArrayList<>();
-        try {
-            data = ExcelImportUtil.importExcel(input, User.class, params);
+        data = ExcelImportUtil.importExcel(input, User.class, params);
 //            data = ExcelImportUtil.importExcel(input, User.class, params);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return new Json(data.toString(), 200);
     }
 
